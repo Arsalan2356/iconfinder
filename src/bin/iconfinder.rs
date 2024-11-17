@@ -26,7 +26,7 @@ fn main() {
         decode::<HashMap<String, String>>(&fs::read("./steamdata").unwrap()).unwrap();
 
     for e in title_to_appids.keys() {
-        if normalized_damerau_levenshtein(e, &arg) > 0.8 {
+        if normalized_damerau_levenshtein(e, &arg) > 0.75 {
             let final_icon_path = title_to_appids.get(e);
             match final_icon_path {
                 Some(p) => {
