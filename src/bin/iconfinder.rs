@@ -51,7 +51,7 @@ fn main() {
                     if time.1 > 0.30 {
                         maxes[i] = time;
                     }
-                    if time.1 >= 0.9 {
+                    if time.1 >= 0.75 {
                         break;
                     }
                 }
