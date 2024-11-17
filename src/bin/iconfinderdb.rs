@@ -19,6 +19,7 @@ fn main() {
         "/run/current-system/sw/share/icons".to_string(),
         home.clone() + "/.local/share/icons",
     ];
+
     let mut icons: [Vec<PathBuf>; 19] = Default::default();
     for i in 0..RES.len() {
         icons[i] = vec![];
@@ -73,7 +74,6 @@ fn main() {
             }
         }
     }
-
     let edata = encode(&saved_icons);
     let sdata = encode(&title_to_appids);
 

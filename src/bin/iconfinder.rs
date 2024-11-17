@@ -71,8 +71,10 @@ fn main() {
                     }
                 }
             }
-            let final_icon_path = icons[maxres][maxicon].to_str().unwrap();
-            println!("{}", final_icon_path);
+            if maxres != usize::MAX {
+                let final_icon_path = icons[maxres][maxicon].to_str().unwrap();
+                println!("{}", final_icon_path);
+            }
         }
     }
 }
