@@ -13,68 +13,77 @@ const RES: [&str; 19] = [
 ];
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
+    let mut arg = match env::args().nth(1) {
+        Some(v) => v,
+        None => "".to_string(),
+    };
 
     let data = fs::read("./data").unwrap();
+
+    let _ = arg.retain(|c| !c.is_ascii_whitespace());
 
     let title_to_appids =
         decode::<HashMap<String, String>>(&fs::read("./steamdata").unwrap()).unwrap();
 
-    match title_to_appids.get(&args[1]) {
-        Some(p) => {
-            let final_icon_path = p;
-            println!("{}", final_icon_path);
-            return;
-        }
-        None => {
-            let icons: [Vec<PathBuf>; 19] = decode::<[Vec<String>; 19]>(&data)
-                .unwrap()
-                .map(|x| x.into_iter().map(|y| PathBuf::from(y)).collect());
-
-            let mut maxes: [(usize, f64); 19] = [(0, 0.0); 19];
-
-            for i in 0..RES.len() {
-                if icons[i].len() > 0 {
-                    let time = icons[i]
-                        .clone()
-                        .into_iter()
-                        .map(|x| {
-                            normalized_damerau_levenshtein(
-                                &String::from(x.file_stem().unwrap().to_str().unwrap()),
-                                &args[1],
-                            )
-                        })
-                        .into_iter()
-                        .enumerate()
-                        .max_by(|(_idx, val), (_idx2, val2)| val.total_cmp(val2))
-                        .unwrap();
-                    if time.1 > 0.30 {
-                        maxes[i] = time;
-                    }
-                    if time.1 >= 0.75 {
-                        break;
-                    }
+    for e in title_to_appids.keys() {
+        if normalized_damerau_levenshtein(e, &arg) > 0.8 {
+            let final_icon_path = title_to_appids.get(e);
+            match final_icon_path {
+                Some(p) => {
+                    println!("{}", p);
+                    return;
                 }
-            }
-
-            let mut maxres = usize::MAX;
-            let mut maxicon = usize::MAX;
-            for i in 0..maxes.len() {
-                if maxes[i].1 > 0.0 && maxres == usize::MAX {
-                    maxres = i;
-                    maxicon = maxes[i].0;
-                } else if maxes[i].1 > 0.0 {
-                    // A much better match
-                    if maxes[i].1 - maxes[maxres].1 > 0.08 {
-                        maxres = i;
-                        maxicon = maxes[i].0;
-                    }
-                }
-            }
-            if maxres != usize::MAX {
-                let final_icon_path = icons[maxres][maxicon].to_str().unwrap();
-                println!("{}", final_icon_path);
+                None => {}
             }
         }
+    }
+
+    let icons: [Vec<PathBuf>; 19] = decode::<[Vec<String>; 19]>(&data)
+        .unwrap()
+        .map(|x| x.into_iter().map(|y| PathBuf::from(y)).collect());
+
+    let mut maxes: [(usize, f64); 19] = [(0, 0.0); 19];
+
+    for i in 0..RES.len() {
+        if icons[i].len() > 0 {
+            let time = icons[i]
+                .clone()
+                .into_iter()
+                .map(|x| {
+                    normalized_damerau_levenshtein(
+                        &String::from(x.file_stem().unwrap().to_str().unwrap()),
+                        &arg,
+                    )
+                })
+                .into_iter()
+                .enumerate()
+                .max_by(|(_idx, val), (_idx2, val2)| val.total_cmp(val2))
+                .unwrap();
+            if time.1 > 0.30 {
+                maxes[i] = time;
+            }
+            if time.1 >= 0.75 {
+                break;
+            }
+        }
+    }
+
+    let mut maxres = usize::MAX;
+    let mut maxicon = usize::MAX;
+    for i in 0..maxes.len() {
+        if maxes[i].1 > 0.0 && maxres == usize::MAX {
+            maxres = i;
+            maxicon = maxes[i].0;
+        } else if maxes[i].1 > 0.0 {
+            // A much better match
+            if maxes[i].1 - maxes[maxres].1 > 0.08 {
+                maxres = i;
+                maxicon = maxes[i].0;
+            }
+        }
+    }
+    if maxres != usize::MAX {
+        let final_icon_path = icons[maxres][maxicon].to_str().unwrap();
+        println!("{}", final_icon_path);
     }
 }

@@ -63,11 +63,17 @@ fn main() {
                 let fdata = fs::read_to_string(e.path().to_str().unwrap()).unwrap();
 
                 let e2 = reg2.captures(&fdata).unwrap().get(1).unwrap();
-                let cap = reg.captures(&fdata).unwrap().get(1).unwrap();
+                let mut cap = reg
+                    .captures(&fdata)
+                    .unwrap()
+                    .get(1)
+                    .unwrap()
+                    .as_str()
+                    .to_string();
+                cap.retain(|c| !c.is_ascii_whitespace());
                 match steamicons.get(e2.as_str()) {
                     Some(v) => {
-                        title_to_appids
-                            .insert(cap.as_str().to_string().replace("®", ""), v.to_string());
+                        title_to_appids.insert(cap, v.to_string());
                     }
                     None => {}
                 }
