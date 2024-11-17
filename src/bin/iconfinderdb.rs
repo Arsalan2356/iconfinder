@@ -19,7 +19,6 @@ fn main() {
         "/run/current-system/sw/share/icons".to_string(),
         home.clone() + "/.local/share/icons",
     ];
-    println!("PATHS : {:?}", paths);
 
     let mut icons: [Vec<PathBuf>; 19] = Default::default();
     for i in 0..RES.len() {
@@ -35,7 +34,6 @@ fn main() {
     for path in paths.iter() {
         for fd in FIRST_DIRS {
             let p2 = path.to_owned() + fd;
-            println!("Searching... : {}", p2);
             search_first(Path::new(&p2), RES.len(), &mut icons, &mut steamicons);
         }
     }
@@ -56,7 +54,6 @@ fn main() {
 
     let mut title_to_appids: HashMap<String, String> = HashMap::new();
     for s in steampaths {
-        println!("Steam Searching... : {}", s);
         let items = read_dir(s).unwrap();
         for i in items {
             let e = i.unwrap();

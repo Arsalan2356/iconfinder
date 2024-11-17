@@ -50,16 +50,8 @@ fn main() {
                         .unwrap();
                     if time.1 > 0.30 {
                         maxes[i] = time;
-                        println!("Best Match at res {}", RES[i]);
-                        println!("DL Value : {}", time.1);
-                        println!("Index : {}", time.0);
-                        println!("Icon Path : {}", icons[i][time.0].to_str().unwrap());
                     }
                     if time.1 >= 0.9 {
-                        println!("Break on");
-                        println!("DL Value : {}", time.1);
-                        println!("Index : {}", time.0);
-                        println!("Icon Path : {}", icons[i][time.0].to_str().unwrap());
                         break;
                     }
                 }
@@ -71,27 +63,18 @@ fn main() {
                 if maxes[i].1 > 0.0 && maxres == usize::MAX {
                     maxres = i;
                     maxicon = maxes[i].0;
-                    println!(
-                        "Current Best Match : {}",
-                        icons[maxres][maxicon].to_str().unwrap()
-                    );
-                    println!("Match % Value : {}", maxes[maxres].1);
                 } else if maxes[i].1 > 0.0 {
                     // A much better match
                     if maxes[i].1 - maxes[maxres].1 > 0.08 {
                         maxres = i;
                         maxicon = maxes[i].0;
-                        println!("Switching best match");
-                        println!(
-                            "Current Best Match : {}",
-                            icons[maxres][maxicon].to_str().unwrap()
-                        );
-                        println!("Match % Value : {}", maxes[maxres].1);
                     }
                 }
             }
-            let final_icon_path = icons[maxres][maxicon].to_str().unwrap();
-            println!("{}", final_icon_path);
+            if maxres != usize::MAX {
+                let final_icon_path = icons[maxres][maxicon].to_str().unwrap();
+                println!("{}", final_icon_path);
+            }
         }
     }
 }
