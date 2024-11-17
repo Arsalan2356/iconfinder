@@ -26,11 +26,12 @@ fn main() {
         decode::<HashMap<String, String>>(&fs::read("./steamdata").unwrap()).unwrap();
 
     for e in title_to_appids.keys() {
-        if normalized_damerau_levenshtein(e, &arg) > 0.75 {
+        let val = normalized_damerau_levenshtein(e, &arg);
+        if val > 0.75 {
             let final_icon_path = title_to_appids.get(e);
             match final_icon_path {
                 Some(p) => {
-                    println!("{}", p);
+                    println!("{}<separator>{:.3}", p, val);
                     return;
                 }
                 None => {}
@@ -84,6 +85,6 @@ fn main() {
     }
     if maxres != usize::MAX {
         let final_icon_path = icons[maxres][maxicon].to_str().unwrap();
-        println!("{}", final_icon_path);
+        println!("{}<separator>{:.3}", final_icon_path, maxes[maxres].1);
     }
 }
