@@ -55,7 +55,7 @@ fn main() {
                         println!("Index : {}", time.0);
                         println!("Icon Path : {}", icons[i][time.0].to_str().unwrap());
                     }
-                    if time.1 >= 0.75 {
+                    if time.1 >= 0.9 {
                         println!("Break on");
                         println!("DL Value : {}", time.1);
                         println!("Index : {}", time.0);
